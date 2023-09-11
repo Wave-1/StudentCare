@@ -1,0 +1,5 @@
+.bgcolor{
+    min-height: 100vh;
+    background-color: #eceff1;
+    /* background: linear-gradient(158deg, rgb(244, 244, 244) 0%, rrgb(233, 237, 254) 100%); */
+}

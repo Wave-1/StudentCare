@@ -4,11 +4,11 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-
+import { useNavigate } from "react-router-dom";
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
+    const navigate = useNavigate();
     const handleSubmit = (event) => {
         event.preventDefault();
         if (validation()) {
@@ -17,6 +17,8 @@ const Login = () => {
                 username: data.get("username"),
                 password: data.get("password"),
             });
+            console.log('Đăng nhập thành công')
+            navigate('/');
         }
     };
 
