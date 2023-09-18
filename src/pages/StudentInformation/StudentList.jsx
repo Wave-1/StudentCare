@@ -171,7 +171,7 @@ export default function StudentList() {
           component="div"
           sx={{ padding: "20px" }}
         >
-          Danh Sách Sinh Viên
+          Student List
         </Typography>
         <Divider />
         <Box height={10} />
@@ -193,7 +193,7 @@ export default function StudentList() {
             sx={{ flexGrow: 1 }}
           ></Typography>
           <Button variant="contained" endIcon={<AddCircleIcon />} onClick={handleOpen}>
-            Thêm
+            Add
           </Button>
         </Stack>
         <Box height={10} />

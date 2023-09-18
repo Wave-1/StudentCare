@@ -16,6 +16,7 @@ import ListItemText from '@mui/material/ListItemText';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import PersonIcon from '@mui/icons-material/Person';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useAppStore } from '../appStore';
 
 const drawerWidth = 240;
@@ -84,9 +85,9 @@ export default function Menu() {
           </IconButton>
         </DrawerHeader>
         <Divider />
-
         <Divider />
         <List>
+          {/* Home */}
           <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/') }}>
             <ListItemButton
               sx={{
@@ -107,6 +108,8 @@ export default function Menu() {
               <ListItemText primary="Home" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
+
+          {/* Student */}
           <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/student') }}>
             <ListItemButton
               sx={{
@@ -124,9 +127,53 @@ export default function Menu() {
               >
                 <PersonIcon />
               </ListItemIcon>
-              <ListItemText primary="Student" sx={{ opacity: open ? 1 : 0 }} />
+              <ListItemText primary="Student Information" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
+          {/* Teacher */}
+          <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/teacher') }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText primary="Teacher Information" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+          {/* Calendar */}
+          <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/workschedule') }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                <CalendarMonthIcon />
+              </ListItemIcon>
+              <ListItemText primary="Work Schedule" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+
+          {/* About */}
           <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/about') }}>
             <ListItemButton
               sx={{

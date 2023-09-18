@@ -64,7 +64,7 @@ export default function EditStudent({ fid, closeEvent }) {
     <>
       <Box sx={{ m: 2 }} />
       <Typography variant="h5" align="center">
-        Sửa sinh viên
+        Edit Student
       </Typography>
       <Box height={20} />
       <Grid container spacing={2}>
@@ -119,7 +119,7 @@ export default function EditStudent({ fid, closeEvent }) {
         <Grid item xs={12}>
           <Typography variant="h5" align="center">
             <Button variant="contained" onClick={updateStudent}>
-              Sửa
+              Edit
             </Button>
           </Typography>
         </Grid>

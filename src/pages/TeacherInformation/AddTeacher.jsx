@@ -5,10 +5,10 @@ import Swal from 'sweetalert2';
 import CloseIcon from '@mui/icons-material/Close';   
 import { useAppStore } from '../../appStore';
 
-export default function AddStudent({ closeEvent }) {
+export default function AddTeacher({ closeEvent }) {
 
     const setRows = useAppStore((state) => state.setRows);
-    const [studentData, setStudentData] = useState({
+    const [teacherData, setTeacherData] = useState({
         id: '',
         userId: '',
         title: '',
@@ -17,13 +17,13 @@ export default function AddStudent({ closeEvent }) {
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        setStudentData({
-            ...studentData,
+        setTeacherData({
+            ...teacherData,
             [name]: value,
         });
     };
 
-    const creatStudent = async () => {
+    const createTeacher = async () => {
         // Assuming you have an API endpoint to create a new student
         const apiUrl = `${API_URL}`;
 
@@ -33,7 +33,7 @@ export default function AddStudent({ closeEvent }) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(studentData),
+                body: JSON.stringify(teacherData),
             });
 
             if (response.ok) {
@@ -54,7 +54,7 @@ export default function AddStudent({ closeEvent }) {
         <>
             <Box sx={{ m: 2 }} />
             <Typography variant="h5" align="center">
-                Thêm sinh viên
+                Add Teacher
             </Typography>
             {/* <IconButton style={{ position: 'absolute', top: '0', right: '0' }}
                 onClick={closeEvent}
@@ -71,7 +71,7 @@ export default function AddStudent({ closeEvent }) {
                         variant="outlined"
                         size="small"
                         name="id"
-                        value={studentData.id}
+                        value={teacherData.id}
                         onChange={handleChange}
                     />
                 </Grid>
@@ -83,7 +83,7 @@ export default function AddStudent({ closeEvent }) {
                         variant="outlined"
                         size="small"
                         name="userId"
-                        value={studentData.userId}
+                        value={teacherData.userId}
                         onChange={handleChange}
                     />
                 </Grid>
@@ -95,7 +95,7 @@ export default function AddStudent({ closeEvent }) {
                         variant="outlined"
                         size="small"
                         name="title"
-                        value={studentData.title}
+                        value={teacherData.title}
                         onChange={handleChange}
                     />
                 </Grid>
@@ -107,14 +107,14 @@ export default function AddStudent({ closeEvent }) {
                         variant="outlined"
                         size="small"
                         name="body"
-                        value={studentData.body}
+                        value={teacherData.body}
                         onChange={handleChange}
                     />
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="h5" align="center">
-                        <Button variant="contained" onClick={creatStudent}>
-                            Thêm
+                        <Button variant="contained" onClick={createTeacher}>
+                            Add
                         </Button>
                     </Typography>
                 </Grid>
