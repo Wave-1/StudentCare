@@ -22,9 +22,9 @@ import Swal from "sweetalert2";
 import Autocomplete from "@mui/material/Autocomplete";
 
 import { useEffect, useState } from "react";
-import { API_URL } from '../../apiConfig';
+import { API_BASE_URL } from '../../../apiConfig';
 // import AddStudent from './AddStudent';
-import { useAppStore } from '../../appStore';
+import { useAppStore } from '../../../appStore';
 // import EditStudent from './EditStudent';
 import { Skeleton } from '@mui/material';
 import AddTeacher from './AddTeacher';
@@ -59,9 +59,9 @@ export default function TeacherList() {
     const rows = useAppStore((state) => state.rows);
 
     useEffect(() => {
-        // Fetch data from API_URL and update 'rows' state here.
+        // Fetch data from API_BASE_URL and update 'rows' state here.
         // Example using fetch:
-        fetch(API_URL)
+        fetch(API_BASE_URL)
             .then((response) => response.json())
             .then((data) => setRows(data))
             .catch((error) => console.error(error));
@@ -93,7 +93,7 @@ export default function TeacherList() {
     };
     const deleteApi = async (id) => {
         try {
-            const apiUrl = `${API_URL}/${id}`;
+            const apiUrl = `${API_BASE_URL}/${id}`;
             const response = await fetch(apiUrl, {
                 method: "DELETE",
                 headers: {
@@ -123,7 +123,7 @@ export default function TeacherList() {
             setRows([v]);
         } else {
             // Fetch the full list of students and set it when the input is cleared.
-            fetch(API_URL)
+            fetch(API_BASE_URL)
                 .then((response) => response.json())
                 .then((data) => setRows(data))
                 .catch((error) => console.error(error));

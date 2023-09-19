@@ -1,12 +1,9 @@
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
-import Home from './pages/Home';
 import Login from "./pages/Login";
-import About from './pages/About';
-import Student from './pages/StudentInformation/Student';
-import WorkSchedule from './pages/WorkSchedule/WorkSchedule';
-import Teacher from './pages/TeacherInformation/Teacher';
+import Home from "./pages/Home";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AdminRoutes, StudentRoutes, TeacherRoutes } from './compoments/Routes';
 
 function App() {
   return (
@@ -15,12 +12,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/student" element={<Student />} />
-          <Route path="/teacher" element={<Teacher />} />
-          <Route path="/workschedule" element={<WorkSchedule />} />
-          <Route path="/about" element={<About />} />
-
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Student/*" element={<StudentRoutes />} />
+          <Route path="/Teacher/*" element={<TeacherRoutes />} />
+          <Route path="/Admin/*" element={<AdminRoutes/>}/>
         </Routes>
       </BrowserRouter>
     </>

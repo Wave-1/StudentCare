@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Box, Button, Grid, IconButton, TextField, Typography } from '@mui/material';
-import { API_URL } from '../../apiConfig';
+import { API_BASE_URL } from '../../../apiConfig';
 import Swal from 'sweetalert2';
 import CloseIcon from '@mui/icons-material/Close';   
-import { useAppStore } from '../../appStore';
+import { useAppStore } from '../../../appStore';
 
 export default function AddStudent({ closeEvent }) {
 
@@ -25,7 +25,7 @@ export default function AddStudent({ closeEvent }) {
 
     const creatStudent = async () => {
         // Assuming you have an API endpoint to create a new student
-        const apiUrl = `${API_URL}`;
+        const apiUrl = `${API_BASE_URL}`;
 
         try {
             const response = await fetch(apiUrl, {

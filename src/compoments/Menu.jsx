@@ -110,7 +110,7 @@ export default function Menu() {
           </ListItem>
 
           {/* Student */}
-          <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/student') }}>
+          <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/Admin/Student') }}>
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -131,7 +131,7 @@ export default function Menu() {
             </ListItemButton>
           </ListItem>
           {/* Teacher */}
-          <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/teacher') }}>
+          <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/Admin/Teacher') }}>
             <ListItemButton
               sx={{
                 minHeight: 48,
@@ -152,7 +152,7 @@ export default function Menu() {
             </ListItemButton>
           </ListItem>
           {/* Calendar */}
-          <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/workschedule') }}>
+          <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/Admin/Workschedule') }}>
             <ListItemButton
               sx={{
                 minHeight: 48,

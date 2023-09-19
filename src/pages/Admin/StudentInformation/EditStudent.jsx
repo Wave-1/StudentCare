@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Grid, TextField, Typography } from '@mui/material';
-import { API_URL } from '../../apiConfig';
+import { API_BASE_URL } from '../../../apiConfig';
 import Swal from 'sweetalert2';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -14,7 +14,7 @@ export default function EditStudent({ fid, closeEvent }) {
 
   useEffect(() => {
     // Assuming you have an API endpoint to fetch student data by ID
-    const apiUrl = `${API_URL}/${fid.id}`; // Replace with your API endpoint
+    const apiUrl = `${API_BASE_URL}/${fid.id}`; // Replace with your API endpoint
 
     fetch(apiUrl)
       .then((response) => response.json())
@@ -35,7 +35,7 @@ export default function EditStudent({ fid, closeEvent }) {
 
   const updateStudent = async () => {
     // Assuming you have an API endpoint to update student data
-    const apiUrl = `${API_URL}/${fid.id}`; // Replace with your API endpoint
+    const apiUrl = `${API_BASE_URL}/${fid.id}`; // Replace with your API endpoint
 
     try {
       const response = await fetch(apiUrl, {
