@@ -22,14 +22,12 @@ import Swal from "sweetalert2";
 import Autocomplete from "@mui/material/Autocomplete";
 
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from '../../../apiConfig';
-// import AddStudent from './AddStudent';
+import { API_BASE_URL, API_ROUTES, API_HEADERS } from '../../../apiConfig';
 import { useAppStore } from '../../../appStore';
-// import EditStudent from './EditStudent';
 import { Skeleton } from '@mui/material';
 import AddTeacher from './AddTeacher';
 import EditTeacher from './EditTeacher';
-
+import axios from 'axios';
 
 const style = {
     position: 'absolute',
@@ -46,10 +44,9 @@ const style = {
 export default function TeacherList() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    // const [rows, setRows] = useState([]);
-
     const [open, setOpen] = useState(false);
     const [formid, setFormID] = useState('');
+    
     const [editopen, setEditOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -59,13 +56,20 @@ export default function TeacherList() {
     const rows = useAppStore((state) => state.rows);
 
     useEffect(() => {
-        // Fetch data from API_BASE_URL and update 'rows' state here.
-        // Example using fetch:
-        fetch(API_BASE_URL)
-            .then((response) => response.json())
-            .then((data) => setRows(data))
-            .catch((error) => console.error(error));
+        axios.get(API_BASE_URL + API_ROUTES.Teacher, {
+            headers: API_HEADERS,
+        })
+        .then((response) => {
+            if (response.status === 200) {
+                return response.data;
+            } else {
+                throw new Error('Failed to fetch data');
+            }
+        })
+        .then((data) => setRows(data))
+        .catch((error) => console.log(error));
     }, []);
+    
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -91,51 +95,43 @@ export default function TeacherList() {
             }
         });
     };
-    const deleteApi = async (id) => {
+
+    const deleteApi = async (teacherID) => { // Change 'id' to 'teacherID'
         try {
-            const apiUrl = `${API_BASE_URL}/${id}`;
-            const response = await fetch(apiUrl, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (response.ok) {
-                // Item deleted successfully, you may want to remove it from the 'rows' state.
-                const updatedRows = rows.filter((row) => row.id !== id);
+            const response = await axios.delete(`${API_BASE_URL}${API_ROUTES.Teacher}/${teacherID}`); // Corrected the URL format
+    
+            if (response.status === 200) { // Check the status code, not 'ok'
+                const updatedRows = rows.filter((row) => row.teacherID !== teacherID);
                 setRows(updatedRows);
-
+    
                 Swal.fire("Deleted!", "Your file has been deleted.", "success");
             } else {
-                // Handle error when item deletion fails
                 Swal.fire("Error", "Failed to delete item", "error");
             }
         } catch (error) {
-            // Handle network or other errors
             Swal.fire("Error", `An error occurred: ${error.message}`, "error");
         }
     };
 
     const filterData = (v) => {
         if (v) {
-            // Filtered data is set when a value is selected in the autocomplete input.
             setRows([v]);
         } else {
-            // Fetch the full list of students and set it when the input is cleared.
-            fetch(API_BASE_URL)
+            fetch(API_BASE_URL + API_ROUTES.Teacher, {
+                headers: API_HEADERS,
+            })
                 .then((response) => response.json())
                 .then((data) => setRows(data))
                 .catch((error) => console.error(error));
         }
     };
 
-    const editData = (id, userId, title, body) => {
+    const editData = (teacherID, teacherName, problemID, roleID) => {
         const data = {
-            id: id,
-            userId: userId,
-            title: title,
-            body: body
+            teacherID: teacherID,
+            teacherName: teacherName,
+            problemID: problemID,
+            roleID: roleID
         };
         setFormID(data);
         handleEditOpen();
@@ -167,7 +163,7 @@ export default function TeacherList() {
                     </Box>
                 </Modal>
             </div>
-            {rows.length > 0 && (
+            {rows.length >= 0 && (
                 <Paper sx={{ width: '100%', overflow: 'hidden', padding: '12px' }}>
                     <Typography
                         gutterBottom
@@ -186,7 +182,7 @@ export default function TeacherList() {
                             options={rows}
                             sx={{ width: 300 }}
                             onChange={(e, v) => filterData(v)}
-                            getOptionLabel={(row) => row.title || ""}
+                            getOptionLabel={(row) => row.teacherName || ""}
                             renderInput={(params) => (
                                 <TextField {...params} size="small" label="Search" />
                             )}
@@ -206,16 +202,16 @@ export default function TeacherList() {
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left" style={{ minWidth: "100px" }}>
-                                        ID
+                                        Teacher ID
                                     </TableCell>
                                     <TableCell align="left" style={{ minWidth: "100px" }}>
-                                        ID Giáo Viên
+                                        Teacher Name
                                     </TableCell>
                                     <TableCell align="left" style={{ minWidth: "100px" }}>
-                                        Tên Giáo Viên
+                                        Problem ID
                                     </TableCell>
                                     <TableCell align="left" style={{ minWidth: "100px" }}>
-                                        Vấn Đề
+                                        Role ID
                                     </TableCell>
                                     <TableCell align="left" style={{ minWidth: "100px" }}>
                                         Actions
@@ -227,18 +223,18 @@ export default function TeacherList() {
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row) => {
                                         return (
-                                            <TableRow key={row.id} hover role="checkbox" tabIndex={-1}>
+                                            <TableRow key={row.teacherID} hover role="checkbox" tabIndex={-1}>
                                                 <TableCell align='left'>
-                                                    {row.id}
+                                                    {row.teacherID}
                                                 </TableCell>
                                                 <TableCell align='left'>
-                                                    {row.userId}
+                                                    {row.teacherName}
                                                 </TableCell>
                                                 <TableCell align='left'>
-                                                    {row.title}
+                                                    {row.problemID}
                                                 </TableCell>
                                                 <TableCell align='left'>
-                                                    {row.body}
+                                                    {row.roleID}
                                                 </TableCell>
                                                 <TableCell align="left">
                                                     <Stack spacing={2} direction="row">
@@ -250,7 +246,12 @@ export default function TeacherList() {
                                                             }}
                                                             className="cursor-pointer"
                                                             onClick={() => {
-                                                                editData(row.id, row.userId, row.title, row.body);
+                                                                editData(
+                                                                    row.teacherID,
+                                                                    row.teacherName,
+                                                                    row.problemID,
+                                                                    row.roleID
+                                                                );
                                                             }}
                                                         />
                                                         <DeleteIcon
@@ -260,7 +261,7 @@ export default function TeacherList() {
                                                                 cursor: "pointer",
                                                             }}
                                                             onClick={() => {
-                                                                deleteUser(row.id);
+                                                                deleteUser(row.teacherID);
                                                             }}
                                                         />
                                                     </Stack>
@@ -282,7 +283,7 @@ export default function TeacherList() {
                     />
                 </Paper>
             )}
-            {rows.length == 0 && (
+            {rows.length === 0 && (
                 <>
                     <Paper sx={{ width: '100%', overflow: 'hidden', padding: '12px' }}>
                         <Box height={20} />
