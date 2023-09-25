@@ -17,13 +17,12 @@ import Button from "@mui/material/Button";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import TextField from "@mui/material/TextField";
 import Modal from '@mui/material/Modal';
+import Autocomplete from "@mui/material/Autocomplete";
 
 import Swal from "sweetalert2";
-import Autocomplete from "@mui/material/Autocomplete";
 
 import { useEffect, useState } from "react";
 import { API_BASE_URL, API_ROUTES, API_HEADERS } from '../../../apiConfig';
-import { useAppStore } from '../../../appStore';
 import { Skeleton } from '@mui/material';
 import AddTeacher from './AddTeacher';
 import EditTeacher from './EditTeacher';
@@ -41,35 +40,37 @@ const style = {
     p: 4,
 };
 
-export default function TeacherList() {
+const TeacherList = () => {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [open, setOpen] = useState(false);
     const [formid, setFormID] = useState('');
-    
     const [editopen, setEditOpen] = useState(false);
+    const [rows, setRows] = useState([]);
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const handleEditOpen = () => setEditOpen(true);
     const handleEditClose = () => setEditOpen(false);
-    const setRows = useAppStore((state) => state.setRows);
-    const rows = useAppStore((state) => state.rows);
 
     useEffect(() => {
-        axios.get(API_BASE_URL + API_ROUTES.Teacher, {
-            headers: API_HEADERS,
-        })
-        .then((response) => {
-            if (response.status === 200) {
-                return response.data;
-            } else {
-                throw new Error('Failed to fetch data');
-            }
-        })
-        .then((data) => setRows(data))
-        .catch((error) => console.log(error));
+        const fetchData = async () => {
+            await axios.get(API_BASE_URL + API_ROUTES.Teacher, {
+                headers: API_HEADERS
+            })
+                .then((response) => {
+                    if (response.status === 200) {
+                        return response.data;
+                    } else {
+                        throw new Error('Failed to fetch data');
+                    }
+                })
+                .then((data) => setRows(data))
+                .catch((error) => console.log(error));
+        };
+
+        fetchData();
     }, []);
-    
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -80,7 +81,7 @@ export default function TeacherList() {
         setPage(0);
     };
 
-    const deleteUser = (id) => {
+    const deleteUser = (teacherID) => {
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -91,19 +92,19 @@ export default function TeacherList() {
             confirmButtonText: "Yes, delete it!",
         }).then((result) => {
             if (result.value) {
-                deleteApi(id);
+                deleteApi(teacherID);
             }
         });
     };
 
-    const deleteApi = async (teacherID) => { // Change 'id' to 'teacherID'
+    const deleteApi = async (teacherID) => {
         try {
-            const response = await axios.delete(`${API_BASE_URL}${API_ROUTES.Teacher}/${teacherID}`); // Corrected the URL format
-    
-            if (response.status === 200) { // Check the status code, not 'ok'
+            const response = await axios.delete(`${API_BASE_URL}${API_ROUTES.Teacher}/${teacherID}`, {
+                headers: API_HEADERS
+            });
+            if (response.status === 200) {
                 const updatedRows = rows.filter((row) => row.teacherID !== teacherID);
                 setRows(updatedRows);
-    
                 Swal.fire("Deleted!", "Your file has been deleted.", "success");
             } else {
                 Swal.fire("Error", "Failed to delete item", "error");
@@ -117,10 +118,14 @@ export default function TeacherList() {
         if (v) {
             setRows([v]);
         } else {
-            fetch(API_BASE_URL + API_ROUTES.Teacher, {
-                headers: API_HEADERS,
-            })
-                .then((response) => response.json())
+            axios.get(API_BASE_URL + API_ROUTES.Teacher, { headers: API_HEADERS })
+                .then((response) => {
+                    if (response.status === 200) {
+                        return response.data;
+                    } else {
+                        throw new Error('Failed to fetch data');
+                    }
+                })
                 .then((data) => setRows(data))
                 .catch((error) => console.error(error));
         }
@@ -147,9 +152,7 @@ export default function TeacherList() {
                     aria-describedby="modal-modal-description"
                 >
                     <Box sx={style}>
-                        <AddTeacher
-                            closeEvent={handleClose}
-                        />
+                        <AddTeacher closeEvent={handleClose} />
                     </Box>
                 </Modal>
                 <Modal
@@ -171,7 +174,7 @@ export default function TeacherList() {
                         component="div"
                         sx={{ padding: "20px" }}
                     >
-                        Teacher List
+                        Teacher Information
                     </Typography>
                     <Divider />
                     <Box height={10} />
@@ -303,5 +306,7 @@ export default function TeacherList() {
                 </>
             )}
         </>
-    );
+    )
 }
+
+export default TeacherList;

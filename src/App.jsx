@@ -11,7 +11,7 @@ function App() {
       <ToastContainer theme="colored" position="top-center" />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Login />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Student/*" element={<StudentRoutes />} />
           <Route path="/Teacher/*" element={<TeacherRoutes />} />

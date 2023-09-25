@@ -22,11 +22,11 @@ import Swal from "sweetalert2";
 import Autocomplete from "@mui/material/Autocomplete";
 
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from '../../../apiConfig';
 import AddStudent from './AddStudent';
-import { useAppStore } from '../../../appStore';
 import EditStudent from './EditStudent';
 import { Skeleton } from '@mui/material';
+import { API_BASE_URL, API_ROUTES, API_HEADERS } from '../../../apiConfig';
+import axios from 'axios';
 
 
 const style = {
@@ -44,25 +44,34 @@ const style = {
 export default function StudentList() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  // const [rows, setRows] = useState([]);
-
   const [open, setOpen] = useState(false);
   const [formid, setFormID] = useState('');
+
   const [editopen, setEditOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleEditOpen = () => setEditOpen(true);
   const handleEditClose = () => setEditOpen(false);
-  const setRows = useAppStore((state) => state.setRows);
-  const rows = useAppStore((state) => state.rows);
+  const [rows, setRows] = useState([]);
+
 
   useEffect(() => {
-    // Fetch data from API_BASE_URL and update 'rows' state here.
-    // Example using fetch:
-    fetch(API_BASE_URL)
-      .then((response) => response.json())
-      .then((data) => setRows(data))
-      .catch((error) => console.error(error));
+    const fetchData = async () => {
+      await axios.get(API_BASE_URL + API_ROUTES.Student, {
+        headers: API_HEADERS
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            return response.data;
+          } else {
+            throw new Error('Failed to fetch data');
+          }
+        })
+        .then((data) => setRows(data))
+        .catch((error) => console.log(error));
+    };
+
+    fetchData();
   }, []);
 
   const handleChangePage = (event, newPage) => {
@@ -74,7 +83,7 @@ export default function StudentList() {
     setPage(0);
   };
 
-  const deleteUser = (id) => {
+  const deleteUser = (studentID) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -85,104 +94,114 @@ export default function StudentList() {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.value) {
-        deleteApi(id);
+        deleteApi(studentID);
       }
     });
   };
-  const deleteApi = async (id) => {
-    try {
-      const apiUrl = `${API_BASE_URL}/${id}`;
-      const response = await fetch(apiUrl, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
 
-      if (response.ok) {
-        // Item deleted successfully, you may want to remove it from the 'rows' state.
-        const updatedRows = rows.filter((row) => row.id !== id);
+  const deleteApi = async (studentID) => { // Change 'id' to 'teacherID'
+    try {
+      const response = await axios.delete(`${API_BASE_URL}${API_ROUTES.Student}/${studentID}`,{
+        headers: API_HEADERS
+      }); // Corrected the URL format
+
+      if (response.status === 200) { // Check the status code, not 'ok'
+        const updatedRows = rows.filter((row) => row.studentID !== studentID);
         setRows(updatedRows);
 
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
       } else {
-        // Handle error when item deletion fails
         Swal.fire("Error", "Failed to delete item", "error");
       }
     } catch (error) {
-      // Handle network or other errors
       Swal.fire("Error", `An error occurred: ${error.message}`, "error");
     }
   };
-
   const filterData = (v) => {
     if (v) {
-      // Filtered data is set when a value is selected in the autocomplete input.
       setRows([v]);
     } else {
-      // Fetch the full list of students and set it when the input is cleared.
-      fetch(API_BASE_URL)
-        .then((response) => response.json())
+      axios.get(API_BASE_URL + API_ROUTES.Student, { headers: API_HEADERS })
+        .then((response) => {
+          if (response.status === 200) {
+            return response.data;
+          } else {
+            throw new Error('Failed to fetch data');
+          }
+        })
         .then((data) => setRows(data))
         .catch((error) => console.error(error));
     }
   };
 
-  const editData = (id, userId, title, body) => {
+  const editData = (studentID, studentName, birthday, studentClass, course, fieldOfStudy, phoneNumber, email, placeOfBirth, permanentResidence, yearOfStudy, faculty, roleID) => {
     const data = {
-      id: id,
-      userId: userId,
-      title: title,
-      body: body
+      studentID: studentID,
+      studentName: studentName,
+      birthday: birthday,
+      studentClass: studentClass,
+      course: course,
+      fieldOfStudy: fieldOfStudy,
+      phoneNumber: phoneNumber,
+      email: email,
+      placeOfBirth: placeOfBirth,
+      permanentResidence: permanentResidence,
+      yearOfStudy: yearOfStudy,
+      faculty: faculty,
+      roleID: roleID
     };
     setFormID(data);
     handleEditOpen();
-  }
+  };
 
   return (
     <>
       <div>
         <Modal
           open={open}
-          onClose={handleClose}
+          onClose={() => setOpen(false)}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <Box sx={style}>
-            <AddStudent closeEvent={handleClose} />
+          <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg shadow-md w-max">
+            <AddStudent onClose={() => setOpen(false)} />
           </Box>
         </Modal>
         <Modal
           open={editopen}
-          onClose={handleEditClose}
+          onClose={() => setEditOpen(false)}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <Box sx={style}>
-            <EditStudent fid={formid} closeEvent={handleEditClose} />
+          <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg shadow-md w-max">
+            <EditStudent
+              fid={formid}
+              onClose={() => setEditOpen(false)}
+            />
           </Box>
         </Modal>
       </div>
-      {rows.length > 0 &&(
-      <Paper sx={{ width: '100%', overflow: 'hidden', padding: '12px' }}>
+
+      <Paper className="w-full overflow-hidden p-3">
         <Typography
           gutterBottom
           variant="h5"
           component="div"
-          sx={{ padding: "20px" }}
+          className="p-2"
         >
-          Student List
+          Student Information
         </Typography>
         <Divider />
-        <Box height={10} />
+        <div className="h-10" />
+
         <Stack direction="row" spacing={2} className="my-2 mb-2">
           <Autocomplete
             disablePortal
             id="combo-box-demo"
             options={rows}
-            sx={{ width: 300 }}
+            className="w-96"
             onChange={(e, v) => filterData(v)}
-            getOptionLabel={(row) => row.title || ""}
+            getOptionLabel={(row) => row.studentName || ""}
             renderInput={(params) => (
               <TextField {...params} size="small" label="Search" />
             )}
@@ -190,32 +209,38 @@ export default function StudentList() {
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1 }}
+            className="flex-grow"
           ></Typography>
-          <Button variant="contained" endIcon={<AddCircleIcon />} onClick={handleOpen}>
+          <Button
+            variant="contained"
+            endIcon={<AddCircleIcon />}
+            onClick={() => setOpen(true)}
+            className="bg-blue-500 text-white rounded hover:bg-violet-600"
+          >
             Add
           </Button>
         </Stack>
-        <Box height={10} />
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table stickyHeader aria-label="sticky table">
+
+        <div className="h-10" />
+
+        <TableContainer className="max-h-450">
+          <Table className="sticky top-0" aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell align="left" style={{ minWidth: "100px" }}>
-                  ID
-                </TableCell>
-                <TableCell align="left" style={{ minWidth: "100px" }}>
-                  UserID
-                </TableCell>
-                <TableCell align="left" style={{ minWidth: "100px" }}>
-                  Title
-                </TableCell>
-                <TableCell align="left" style={{ minWidth: "100px" }}>
-                  Body
-                </TableCell>
-                <TableCell align="left" style={{ minWidth: "100px" }}>
-                  Action
-                </TableCell>
+                <TableCell className="min-w-100">Student ID</TableCell>
+                <TableCell className="min-w-100">Student Name</TableCell>
+                <TableCell className="min-w-100">Birthday</TableCell>
+                <TableCell className="min-w-100">Class</TableCell>
+                <TableCell className="min-w-100">Course</TableCell>
+                <TableCell className="min-w-100">FieldOfStudy</TableCell>
+                <TableCell className="min-w-100">Phone Number</TableCell>
+                <TableCell className="min-w-100">Email</TableCell>
+                <TableCell className="min-w-100">Place of Birth</TableCell>
+                <TableCell className="min-w-100">Permanent Residence</TableCell>
+                <TableCell className="min-w-100">Year of Study</TableCell>
+                <TableCell className="min-w-100">Faculty</TableCell>
+                <TableCell className="min-w-100">Role ID</TableCell>
+                <TableCell className="min-w-100">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -223,20 +248,47 @@ export default function StudentList() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                   return (
-                    <TableRow key={row.id} hover role="checkbox" tabIndex={-1}>
-                      <TableCell align='left'>
-                        {row.id}
+                    <TableRow key={row.studentID} hover role="checkbox" tabIndex={-1}>
+                      <TableCell className="min-w-100">
+                        {row.studentID}
                       </TableCell>
-                      <TableCell align='left'>
-                        {row.userId}
+                      <TableCell className="min-w-100">
+                        {row.studentName}
                       </TableCell>
-                      <TableCell align='left'>
-                        {row.title}
+                      <TableCell className="min-w-100">
+                        {row.birthday}
                       </TableCell>
-                      <TableCell align='left'>
-                        {row.body}
+                      <TableCell className="min-w-100">
+                        {row.studentClass}
                       </TableCell>
-                      <TableCell align="left">
+                      <TableCell className="min-w-100">
+                        {row.course}
+                      </TableCell>
+                      <TableCell className="min-w-100">
+                        {row.fieldOfStudy}
+                      </TableCell>
+                      <TableCell className="min-w-100">
+                        {row.phoneNumber}
+                      </TableCell>
+                      <TableCell className="min-w-100">
+                        {row.email}
+                      </TableCell>
+                      <TableCell className="min-w-100">
+                        {row.placeOfBirth}
+                      </TableCell>
+                      <TableCell className="min-w-100">
+                        {row.permanentResidence}
+                      </TableCell>
+                      <TableCell className="min-w-100">
+                        {row.yearOfStudy}
+                      </TableCell>
+                      <TableCell className="min-w-100">
+                        {row.faculty}
+                      </TableCell>
+                      <TableCell className="min-w-100">
+                        {row.roleID}
+                      </TableCell>
+                      <TableCell className="min-w-100">
                         <Stack spacing={2} direction="row">
                           <EditIcon
                             style={{
@@ -245,9 +297,22 @@ export default function StudentList() {
                               cursor: "pointer",
                             }}
                             className="cursor-pointer"
-                            // onClick={() => editUser(row.id)}
                             onClick={() => {
-                              editData(row.id, row.userId, row.title, row.body);
+                              editData(
+                                row.studentID,
+                                row.studentName,
+                                row.birthday,
+                                row.studentClass,
+                                row.course,
+                                row.fieldOfStudy,
+                                row.phoneNumber,
+                                row.email,
+                                row.placeOfBirth,
+                                row.permanentResidence,
+                                row.yearOfStudy,
+                                row.faculty,
+                                row.roleID
+                              );
                             }}
                           />
                           <DeleteIcon
@@ -257,7 +322,7 @@ export default function StudentList() {
                               cursor: "pointer",
                             }}
                             onClick={() => {
-                              deleteUser(row.id);
+                              deleteUser(row.studentID);
                             }}
                           />
                         </Stack>
@@ -278,26 +343,7 @@ export default function StudentList() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      )}
-      {rows.length == 0 &&(
-        <>
-          <Paper sx={{width:'100%', overflow: 'hidden', padding: '12px'}}>
-            <Box height={20}/>
-            <Skeleton variant='rectangular' width={'100%'} height={30}/>
-            <Box height={40}/>
-            <Skeleton variant='rectangular' width={'100%'} height={60}/>
-            <Box height={20}/>
-            <Skeleton variant='rectangular' width={'100%'} height={60}/>
-            <Box height={20}/>
-            <Skeleton variant='rectangular' width={'100%'} height={60}/>
-            <Box height={20}/>
-            <Skeleton variant='rectangular' width={'100%'} height={60}/>
-            <Box height={20}/>
-            <Skeleton variant='rectangular' width={'100%'} height={60}/>
-            <Box height={20}/>
-          </Paper>
-        </>
-      )}
     </>
+
   );
 }

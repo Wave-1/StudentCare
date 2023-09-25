@@ -1,39 +1,85 @@
-import { useState } from 'react'
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import { API_BASE_URL, API_ROUTES } from '../apiConfig';
+import jwtDecode from 'jwt-decode';
+import { toast } from 'react-toastify';
 
 const schema = yup.object().shape({
-    username: yup.string().required('Please enter your username'),
-    password: yup.string().required('Please enter your password'),
-  });
+  id: yup.string().required('Please enter your id'),
+  password: yup.string().required('Please enter your password'),
+});
 
 function Login() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState({});
-    const navigate = useNavigate(); 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try{
-            await schema.validate({username, password}, {abortEarly: false});
-            console.log('Logged in successfully');
-            console.log({
-                username: username,
-                password: password
-            })
-            navigate('/');
-        }catch(err){
-            const validateErrors = {};
-            err.inner.forEach((errors) =>{
-                validateErrors[errors.path] = errors.message;
-            });
-            setErrors(validateErrors);
-        }
-    }
+  const [showPassword, setShowPassword] = useState(false);
+  const [id, setId] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-    return (
-        <>
+  const [errors, setErrors] = useState({
+    id: '',
+    password: '',
+    general: '', // Thêm một lỗi chung để xử lý lỗi từ server
+  });
+
+  useEffect(() => {
+    sessionStorage.clear();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await schema.validate({ id, password }, { abortEarly: false });
+      const response = await axios.post(API_BASE_URL + API_ROUTES.Login, { id, password });
+      const responseData = response.data;
+      console.log(responseData);
+
+      if (responseData.success) {
+        // Lưu token vào sessionStorage
+        localStorage.setItem('token', responseData.data);
+
+        const decodedToken = jwtDecode(responseData.data);
+        console.log(decodedToken);
+
+        const id = decodedToken.ID;
+        const RoleID = decodedToken.RoleID;
+
+        // Kiểm tra role và chuyển hướng vào trang tương ứng
+        // Kiểm tra role và chuyển hướng vào trang tương ứng
+        if (RoleID === '1') {
+          toast.success('Logged in successfully (Admin)');
+          sessionStorage.setItem('ID', id);
+          sessionStorage.setItem('RoleID', '1');
+          navigate('/Admin');
+
+        } else if (RoleID === '2') {
+          toast.success('Logged in successfully (Teacher)');
+          sessionStorage.setItem('ID', id);
+          sessionStorage.setItem('RoleID', '2');
+          navigate('/Teacher');
+
+        } else {
+          toast.success('Logged in successfully (Student)');
+          sessionStorage.setItem('ID', id);
+          sessionStorage.setItem('RoleID', '3');
+          navigate('/Student');
+
+        }
+      } else {
+        toast.error('Id or password incorrect');
+      }
+    } catch (err) {
+      const validateErrors = {};
+      err.inner.forEach((errors) => {
+        validateErrors[errors.path] = errors.message;
+      });
+      setErrors(validateErrors);
+    }
+  };
+
+  return (
+    <>
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
           <div className="text-center">
@@ -46,24 +92,22 @@ function Login() {
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
-                Username
+              <label htmlFor="id" className="block text-sm font-medium leading-6 text-gray-900">
+                ID
               </label>
               <div className="mt-2">
                 <input
-                  id="username"
-                  name="username"
+                  id="id"
+                  name="id"
                   type="text"
-                  autoComplete="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="id"
+                  value={id}
+                  onChange={(e) => setId(e.target.value)}
                   autoFocus
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
-              {errors.username &&(
-                                <p className='mt-2 text-sm text-red-600'>{errors.username}</p>
-                            )}
+              {errors.id && <p className="mt-2 text-sm text-red-600">{errors.id}</p>}
             </div>
 
             <div>
@@ -76,29 +120,33 @@ function Login() {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
-              {errors.password &&(
-                                <p className='mt-2 text-sm text-red-600'>{errors.password}</p>
-                            )}
+              {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password}</p>}
             </div>
+
             <div className="mt-4 flex items-center">
               <input
                 id="showPassword"
                 name="showPassword"
                 type="checkbox"
                 className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              onChange={() => setShowPassword(!showPassword)}   
+                onChange={() => setShowPassword(!showPassword)}
               />
               <label htmlFor="showPassword" className="ml-2 block text-sm font-medium text-gray-700">
                 Show Password
               </label>
             </div>
+
+            {errors.general && (
+              <p className="mt-2 text-sm text-red-600 text-center">{errors.general}</p>
+            )}
+
             <div>
               <button
                 type="submit"
@@ -110,8 +158,8 @@ function Login() {
           </form>
         </div>
       </div>
-        </>
-    )
+    </>
+  );
 }
 
-export default Login
+export default Login;

@@ -2,16 +2,16 @@ import React from 'react'
 import Navbar from '../../../compoments/Navbar'
 import Menu from '../../../compoments/Menu'
 import Box from '@mui/material/Box';
-import FormWorkSchedule from './FormWorkSchedule';
+import FormCertificates from './FormCertificates';
 
-const WorkSchedule = () => {
+const Certificates = () => {
     return (
         <>
             <div className="bgcolor">
-                <Box height={70} />
+                <Box height={20} />
                 <Box sx={{ display: 'flex' }}>
                     <Box compoments="main" height={'95vh'} sx={{ flexGrow: 1, p: 3 }}>
-                        <FormWorkSchedule/>
+                        <FormCertificates/>
                     </Box>
                 </Box>
             </div>
@@ -19,4 +19,4 @@ const WorkSchedule = () => {
     )
 }
 
-export default WorkSchedule
+export default Certificates
