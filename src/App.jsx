@@ -8,14 +8,23 @@ import { AdminRoutes, StudentRoutes, TeacherRoutes } from './compoments/Routes';
 function App() {
   return (
     <>
-      <ToastContainer theme="colored" position="top-center" />
+      <ToastContainer position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="colored" />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Student/*" element={<StudentRoutes />} />
           <Route path="/Teacher/*" element={<TeacherRoutes />} />
-          <Route path="/Admin/*" element={<AdminRoutes/>}/>
+          <Route path="/Admin/*" element={<AdminRoutes />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -68,7 +68,17 @@ export default function Navbar() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const [displayID, setDisplayID] = React.useState('');
   const navigate = useNavigate();
+
+  React.useEffect(() =>{
+    let id = sessionStorage.getItem('ID');
+    if(id === null){
+      navigate('/login');
+    }else{
+      setDisplayID(id);
+    }
+  },[navigate]);
 
   const updateOpen = useAppStore((state) => state.updateOpen);
   const dopen = useAppStore((state) => state.dopen);
@@ -107,7 +117,6 @@ export default function Navbar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
       <MenuItem onClick={() => {handleMenuClose(); navigate('/Login')}}>Thoát</MenuItem>
     </Menu>
   );
@@ -184,7 +193,7 @@ export default function Navbar() {
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' } }}
           >
-            Chăm sóc sinh viên
+            Student Care
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -202,6 +211,7 @@ export default function Navbar() {
                 <NotificationsIcon />
               </Badge>
             </IconButton> */}
+            <p>{displayID}</p>
             <IconButton
               size="large"
               edge="end"

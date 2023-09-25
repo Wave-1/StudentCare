@@ -33,15 +33,17 @@ function Login() {
       await schema.validate({ id, password }, { abortEarly: false });
       const response = await axios.post(API_BASE_URL + API_ROUTES.Login, { id, password });
       const responseData = response.data;
+      console.log(responseData);
 
       if (responseData.success) {
         // Lưu token vào sessionStorage
-        sessionStorage.setItem('token', responseData.data);
+        localStorage.setItem('token', responseData.data);
+
         const decodedToken = jwtDecode(responseData.data);
         console.log(decodedToken);
 
-        const RoleID = decodedToken.RoleID;
         const id = decodedToken.ID;
+        const RoleID = decodedToken.RoleID;
 
         // Kiểm tra role và chuyển hướng vào trang tương ứng
         if (RoleID === '1') {
@@ -55,13 +57,14 @@ function Login() {
 
         } else {
           toast.success('Logged in successfully (User)');
-
         }
+      }else{
+        toast.error('Id or password incorrect');
       }
     } catch (err) {
       const validateErrors = {};
-      err.inner.forEach((errors) =>{
-          validateErrors[errors.path] = errors.message;
+      err.inner.forEach((errors) => {
+        validateErrors[errors.path] = errors.message;
       });
       setErrors(validateErrors);
     }

@@ -3,10 +3,9 @@ import { API_BASE_URL, API_ROUTES, API_HEADERS } from '../../../apiConfig';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { useAppStore } from '../../../appStore';
 
 export default function EditTeacher({ fid, closeEvent }) {
-  const setRows = useAppStore((state) => state.setRows);
+  const [rows, setRows] = useState([]);
   const [teacherData, setTeacherData] = useState({
     teacherID: '',
     teacherName: '',

@@ -3,10 +3,10 @@ import { API_BASE_URL, API_ROUTES, API_HEADERS } from '../../../apiConfig';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { useAppStore } from '../../../appStore';
 
 export default function AddTeacher({ closeEvent }) {
-    const setRows = useAppStore((state) => state.setRows);
+    const [rows, setRows] = useState([]);
+
     const [teacherData, setTeacherData] = useState({
         teacherID: '',
         teacherName: '',
@@ -54,7 +54,6 @@ export default function AddTeacher({ closeEvent }) {
                 });
                 closeEvent();
                 Swal.fire("Add Teacher Successfully !!!", "", "success");
-                fetchData();
             } else {
                 // Xử lý lỗi khi thêm giáo viên thất bại
                 console.error('Failed to create teacher !!!');
