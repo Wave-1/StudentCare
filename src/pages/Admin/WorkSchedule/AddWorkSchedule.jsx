@@ -1,94 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import { API_BASE_URL, API_ROUTES, API_HEADERS } from '../../../apiConfig';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
-import axios from 'axios';
-
-export default function EditTeacher({ fid, onClose }) {
-  const [rows, setRows] = useState([]);
-  const [teacherData, setTeacherData] = useState({
+export default function AddWorkSchedule({ onClose }) {
+  const [newWorkSchedule, setNewWorkSchedule] = useState({
+    workScheduleID: '',
     teacherID: '',
     teacherName: '',
-    problemID: '',
-    roleID: '',
+    daysOfWork: '',
+    startTime: '',
+    endTime: '',
   });
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setTeacherData({
-      ...teacherData,
+    setNewWorkSchedule({
+      ...newWorkSchedule,
       [name]: value,
     });
   };
 
-  const updateTeacher = async () => {
-    // Kiểm tra dữ liệu trước khi gửi yêu cầu
-    if (!teacherData.teacherID || !teacherData.teacherName || !teacherData.problemID || !teacherData.roleID) {
-      toast.error("Please fill in teacher information completely !!!");
-      return;
-    }
-    // Kiểm tra giá trị teacherID có hợp lệ không
-    if (!/^\d+$/.test(teacherData.teacherID)) {
-      toast.error("Teacher ID must be a valid integer.");
-      return;
-    }
-
-    // Xây dựng URL endpoint dựa trên cấu trúc API của bạn
-    const apiUrl = `${API_BASE_URL}${API_ROUTES.Teacher}/${fid.teacherID}`; // Đã sửa URL
-
-    const newTeacherData = {
-      teacherID: teacherData.teacherID,
-      teacherName: teacherData.teacherName,
-      problemID: teacherData.problemID,
-      roleID: teacherData.roleID,
+  const createEvent = async () => {
+    const apiUrl = `${API_BASE_URL}${API_ROUTES.WorkSchedule}`;
+    const workScheduleData = {
+      workScheduleID: newWorkSchedule.workScheduleID,
+      teacherID: newWorkSchedule.teacherID,
+      teacherName: newWorkSchedule.teacherName,
+      daysOfWork: newWorkSchedule.daysOfWork,
+      startTime: newWorkSchedule.startTime,
+      endTime: newWorkSchedule.endTime,
       createDate: new Date(),
       updateDate: new Date(),
-    };
-
+    }
     try {
-      const response = await axios.put(apiUrl, newTeacherData, {
+      const response = await axios.post(apiUrl, workScheduleData, {
         headers: API_HEADERS,
       });
       if (response.status === 200) {
-        // Cập nhật giáo viên thành công, cập nhật lại danh sách giáo viên
-        fetchData(); // Gọi hàm fetchData để cập nhật danh sách giáo viên
+        setNewWorkSchedule({
+          workScheduleID: '',
+          teacherID: '',
+          teacherName: '',
+          daysOfWork: '',
+          startTime: '',
+          endTime: '',
+        });
         onClose();
-        Swal.fire("Update Teacher Successfully !!!", "", "success");
+        Swal.fire("Add Work Schedule Successfully !!!", "", "success");
       } else {
-        // Xử lý lỗi khi cập nhật giáo viên thất bại
-        console.error('Failed to update teacher !!!');
+        // Xử lý lỗi khi thêm giáo viên thất bại
+        console.error('Failed to create teacher !!!');
       }
+
     } catch (error) {
       toast.error(`Đã xảy ra lỗi: ${error.message}`);
       console.error('Đã xảy ra lỗi:', error);
     }
-  };
-
-  // Thực hiện yêu cầu GET dữ liệu từ API và cập nhật dữ liệu trong setRows
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}${API_ROUTES.Teacher}`, {
-        headers: API_HEADERS,
-      });
-      if (response.status === 200) {
-        setRows(response.data);
-      } else {
-        console.error('Failed to fetch teacher data !!!');
-      }
-    } catch (error) {
-      console.error(`Đã xảy ra lỗi khi lấy dữ liệu giáo viên: ${error.message}`);
-    }
-  };
-
-  useEffect(() => {
-    // Khởi tạo giá trị ban đầu cho form sửa đổi
-    setTeacherData({
-      teacherID: fid.teacherID,
-      teacherName: fid.teacherName,
-      problemID: fid.problemID,
-      roleID: fid.roleID,
-    });
-  }, [fid]);
+  }
 
   return (
     <>
@@ -99,20 +68,35 @@ export default function EditTeacher({ fid, onClose }) {
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
                 <label className="block text-sm font-medium leading-6 text-gray-900">
-                  Teacher ID
+                  Work Schedule ID
                 </label>
                 <div className="mt-2">
                   <input
                     type="number"
-                    name="teacherID"
-                    id="teacherID"
+                    name="workScheduleID"
+                    id="workScheduleID"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     onChange={handleChange}
-                    value={teacherData.teacherID}
+                    value={newWorkSchedule.workScheduleID}
                   />
                 </div>
               </div>
 
+              <div className="sm:col-span-3">
+                <label className="block text-sm font-medium leading-6 text-gray-900">
+                  Teacher ID
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="teacherID"
+                    id="teacherID"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    onChange={handleChange}
+                    value={newWorkSchedule.teacherID}
+                  />
+                </div>
+              </div>
               <div className="sm:col-span-3">
                 <label className="block text-sm font-medium leading-6 text-gray-900">
                   Teacher Name
@@ -124,37 +108,52 @@ export default function EditTeacher({ fid, onClose }) {
                     id="teacherName"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     onChange={handleChange}
-                    value={teacherData.teacherName}
+                    value={newWorkSchedule.teacherName}
                   />
                 </div>
               </div>
               <div className="sm:col-span-3">
                 <label className="block text-sm font-medium leading-6 text-gray-900">
-                  Problem ID
+                  Days Of Work
                 </label>
                 <div className="mt-2">
                   <input
-                    type="text"
-                    name="studentClass"
-                    id="studentClass"
+                    id="daysOfWork"
+                    name="daysOfWork"
+                    type="datetime-local"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     onChange={handleChange}
-                    value={teacherData.problemID}
+                    value={newWorkSchedule.daysOfWork}
                   />
                 </div>
               </div>
               <div className="sm:col-span-3">
                 <label className="block text-sm font-medium leading-6 text-gray-900">
-                  Role ID
+                  Start Time
                 </label>
                 <div className="mt-2">
                   <input
-                    id="roleID"
-                    name="RoleID"
-                    type="number"
+                    id="startTime"
+                    name="startTime"
+                    type="datetime-local"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     onChange={handleChange}
-                    value={teacherData.roleID}
+                    value={newWorkSchedule.startTime}
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-3">
+                <label className="block text-sm font-medium leading-6 text-gray-900">
+                  End Time
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="endTime"
+                    name="endTime"
+                    type="datetime-local"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    onChange={handleChange}
+                    value={newWorkSchedule.endTime}
                   />
                 </div>
               </div>
@@ -164,7 +163,7 @@ export default function EditTeacher({ fid, onClose }) {
 
         <div className="mt-6 flex items-center justify-end gap-x-6">
           <button
-            onClick={updateTeacher}
+            onClick={createEvent}
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Save

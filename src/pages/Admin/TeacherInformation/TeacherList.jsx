@@ -48,10 +48,7 @@ const TeacherList = () => {
     const [editopen, setEditOpen] = useState(false);
     const [rows, setRows] = useState([]);
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
     const handleEditOpen = () => setEditOpen(true);
-    const handleEditClose = () => setEditOpen(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -147,164 +144,145 @@ const TeacherList = () => {
             <div>
                 <Modal
                     open={open}
-                    onClose={handleClose}
+                    onClose={() => setOpen(false)}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <Box sx={style}>
-                        <AddTeacher closeEvent={handleClose} />
+                    <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg shadow-md w-max">
+                        <AddTeacher onClose={() => setOpen(false)} />
                     </Box>
                 </Modal>
                 <Modal
                     open={editopen}
-                    onClose={handleEditClose}
+                    onClose={() => setEditOpen(false)}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <Box sx={style}>
-                        <EditTeacher fid={formid} closeEvent={handleEditClose} />
+                    <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg shadow-md w-max">
+                        <EditTeacher
+                            fid={formid}
+                            onClose={() => setEditOpen(false)}
+                        />
                     </Box>
                 </Modal>
             </div>
-            {rows.length >= 0 && (
-                <Paper sx={{ width: '100%', overflow: 'hidden', padding: '12px' }}>
-                    <Typography
-                        gutterBottom
-                        variant="h5"
-                        component="div"
-                        sx={{ padding: "20px" }}
-                    >
-                        Teacher Information
-                    </Typography>
-                    <Divider />
-                    <Box height={10} />
-                    <Stack direction="row" spacing={2} className="my-2 mb-2">
-                        <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            options={rows}
-                            sx={{ width: 300 }}
-                            onChange={(e, v) => filterData(v)}
-                            getOptionLabel={(row) => row.teacherName || ""}
-                            renderInput={(params) => (
-                                <TextField {...params} size="small" label="Search" />
-                            )}
-                        />
-                        <Typography
-                            variant="h6"
-                            component="div"
-                            sx={{ flexGrow: 1 }}
-                        ></Typography>
-                        <Button variant="contained" endIcon={<AddCircleIcon />} onClick={handleOpen}>
-                            Add
-                        </Button>
-                    </Stack>
-                    <Box height={10} />
-                    <TableContainer sx={{ maxHeight: 450 }}>
-                        <Table stickyHeader aria-label="sticky table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="left" style={{ minWidth: "100px" }}>
-                                        Teacher ID
-                                    </TableCell>
-                                    <TableCell align="left" style={{ minWidth: "100px" }}>
-                                        Teacher Name
-                                    </TableCell>
-                                    <TableCell align="left" style={{ minWidth: "100px" }}>
-                                        Problem ID
-                                    </TableCell>
-                                    <TableCell align="left" style={{ minWidth: "100px" }}>
-                                        Role ID
-                                    </TableCell>
-                                    <TableCell align="left" style={{ minWidth: "100px" }}>
-                                        Actions
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {rows
-                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row) => {
-                                        return (
-                                            <TableRow key={row.teacherID} hover role="checkbox" tabIndex={-1}>
-                                                <TableCell align='left'>
-                                                    {row.teacherID}
-                                                </TableCell>
-                                                <TableCell align='left'>
-                                                    {row.teacherName}
-                                                </TableCell>
-                                                <TableCell align='left'>
-                                                    {row.problemID}
-                                                </TableCell>
-                                                <TableCell align='left'>
-                                                    {row.roleID}
-                                                </TableCell>
-                                                <TableCell align="left">
-                                                    <Stack spacing={2} direction="row">
-                                                        <EditIcon
-                                                            style={{
-                                                                fontSize: "20px",
-                                                                color: "blue",
-                                                                cursor: "pointer",
-                                                            }}
-                                                            className="cursor-pointer"
-                                                            onClick={() => {
-                                                                editData(
-                                                                    row.teacherID,
-                                                                    row.teacherName,
-                                                                    row.problemID,
-                                                                    row.roleID
-                                                                );
-                                                            }}
-                                                        />
-                                                        <DeleteIcon
-                                                            style={{
-                                                                fontSize: "20px",
-                                                                color: "darkred",
-                                                                cursor: "pointer",
-                                                            }}
-                                                            onClick={() => {
-                                                                deleteUser(row.teacherID);
-                                                            }}
-                                                        />
-                                                    </Stack>
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25, 100]}
-                        component="div"
-                        count={rows.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
+
+            <Paper className="w-full overflow-hidden p-3">
+                <Typography
+                    gutterBottom
+                    variant="h5"
+                    component="div"
+                    className="p-2"
+                >
+                    Teacher Information
+                </Typography>
+                <Divider />
+                <div className="h-10" />
+
+                <Stack direction="row" spacing={2} className="my-2 mb-2">
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={rows}
+                        className="w-96"
+                        onChange={(e, v) => filterData(v)}
+                        getOptionLabel={(row) => row.teacherName || ""}
+                        renderInput={(params) => (
+                            <TextField {...params} size="small" label="Search" />
+                        )}
                     />
-                </Paper>
-            )}
-            {rows.length === 0 && (
-                <>
-                    <Paper sx={{ width: '100%', overflow: 'hidden', padding: '12px' }}>
-                        <Box height={20} />
-                        <Skeleton variant='rectangular' width={'100%'} height={30} />
-                        <Box height={40} />
-                        <Skeleton variant='rectangular' width={'100%'} height={60} />
-                        <Box height={20} />
-                        <Skeleton variant='rectangular' width={'100%'} height={60} />
-                        <Box height={20} />
-                        <Skeleton variant='rectangular' width={'100%'} height={60} />
-                        <Box height={20} />
-                        <Skeleton variant='rectangular' width={'100%'} height={60} />
-                        <Box height={20} />
-                        <Skeleton variant='rectangular' width={'100%'} height={60} />
-                        <Box height={20} />
-                    </Paper>
-                </>
-            )}
+                    <Typography
+                        variant="h6"
+                        component="div"
+                        className="flex-grow"
+                    ></Typography>
+                    <Button
+                        variant="contained"
+                        endIcon={<AddCircleIcon />}
+                        onClick={() => setOpen(true)}
+                        className="bg-blue-500 text-white rounded hover:bg-violet-600"
+                    >
+                        Add
+                    </Button>
+                </Stack>
+
+                <div className="h-10" />
+
+                <TableContainer className="max-h-450">
+                    <Table className="sticky top-0" aria-label="sticky table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell className="min-w-100">Teacher ID</TableCell>
+                                <TableCell className="min-w-100">Teacher Name</TableCell>
+                                <TableCell className="min-w-100">Problem ID</TableCell>
+                                <TableCell className="min-w-100">Role ID</TableCell>
+                                <TableCell className="min-w-100">Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {rows
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row) => {
+                                    return (
+                                        <TableRow key={row.teacherID} hover role="checkbox" tabIndex={-1}>
+                                            <TableCell className="min-w-100">
+                                                {row.teacherID}
+                                            </TableCell>
+                                            <TableCell className="min-w-100">
+                                                {row.teacherName}
+                                            </TableCell>
+                                            <TableCell className="min-w-100">
+                                                {row.problemID}
+                                            </TableCell>
+                                            <TableCell className="min-w-100">
+                                                {row.roleID}
+                                            </TableCell>
+                                            <TableCell className="min-w-100">
+                                                <Stack spacing={2} direction="row">
+                                                    <EditIcon
+                                                        style={{
+                                                            fontSize: "20px",
+                                                            color: "blue",
+                                                            cursor: "pointer",
+                                                        }}
+                                                        className="cursor-pointer"
+                                                        onClick={() => {
+                                                            editData(
+                                                                row.teacherID,
+                                                                row.teacherName,
+                                                                row.problemID,
+                                                                row.roleID
+                                                            );
+                                                        }}
+                                                    />
+                                                    <DeleteIcon
+                                                        style={{
+                                                            fontSize: "20px",
+                                                            color: "darkred",
+                                                            cursor: "pointer",
+                                                        }}
+                                                        onClick={() => {
+                                                            deleteUser(row.teacherID);
+                                                        }}
+                                                    />
+                                                </Stack>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25, 100]}
+                    component="div"
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </Paper>
         </>
     )
 }

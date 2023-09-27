@@ -6,6 +6,7 @@ const API_ROUTES = {
     WorkSchedule: 'WorkSchedule',
     Teacher: 'Teacher',
     Student: 'Student',
+    Problem: 'Problem',
 }
 export const API_HEADERS = {
     Authorization: `Bearer ${localStorage.getItem('token')}`,

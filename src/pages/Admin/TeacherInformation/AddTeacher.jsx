@@ -4,14 +4,15 @@ import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-export default function AddTeacher({ closeEvent }) {
-    const [rows, setRows] = useState([]);
+export default function AddTeacher({ onClose }) {
+    // const [rows, setRows] = useState([]);
+    const [problems, setProblems] = useState([]);
 
     const [teacherData, setTeacherData] = useState({
         teacherID: '',
         teacherName: '',
         problemID: '',
-        roleID: '',
+        roleID: '2',
     });
 
     const handleChange = (event) => {
@@ -52,7 +53,7 @@ export default function AddTeacher({ closeEvent }) {
                     problemID: '',
                     roleID: '',
                 });
-                closeEvent();
+                onClose();
                 Swal.fire("Add Teacher Successfully !!!", "", "success");
             } else {
                 // Xử lý lỗi khi thêm giáo viên thất bại
@@ -64,14 +65,15 @@ export default function AddTeacher({ closeEvent }) {
         }
     };
 
-        // Thực hiện yêu cầu GET dữ liệu từ API và cập nhật dữ liệu trong setRows
-        const fetchData = async () => {
+    // Thực hiện yêu cầu GET dữ liệu từ API và cập nhật dữ liệu trong setRows
+    useEffect(() => {
+        const fetchProblems = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}${API_ROUTES.Teacher}`, {
+                const response = await axios.get(`${API_BASE_URL}${API_ROUTES.Problem}`, {
                     headers: API_HEADERS,
                 });
                 if (response.status === 200) {
-                    setRows(response.data);
+                    setProblems(response.data);
                 } else {
                     console.error('Failed to fetch teacher data !!!');
                 }
@@ -79,72 +81,103 @@ export default function AddTeacher({ closeEvent }) {
                 console.error(`Đã xảy ra lỗi khi lấy dữ liệu giáo viên: ${error.message}`);
             }
         };
+        fetchProblems();
+    }, []);
 
     return (
         <>
-            <div className="m-2">
-                <h2 className="text-2xl text-center">Add Teacher</h2>
-                <div className="h-4"></div>
-                <div className="grid grid-cols-1 gap-4">
-                    <div>
-                        <p>Teacher ID:</p>
-                        <input
-                            type="number"
-                            className="w-full p-2 border rounded"
-                            id="teacherID"
-                            placeholder="Teacher ID"
-                            name="teacherID"
-                            value={teacherData.teacherID}
-                            onChange={handleChange}
-                        />
+            <div className="container mx-auto p-4 space-y-12">
+                <div className="space-y-12">
+                    <div className="border-b border-gray-900/10 pb-12">
+                        <h2 className="text-4xl font-semibold leading-3 text-gray-900 text-center">Add Teacher</h2>
+                        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                            <div className="sm:col-span-3">
+                                <label className="block text-sm font-medium leading-6 text-gray-900">
+                                    Teacher ID
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="number"
+                                        name="teacherID"
+                                        id="teacherID"
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        onChange={handleChange}
+                                        value={teacherData.teacherID}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="sm:col-span-3">
+                                <label className="block text-sm font-medium leading-6 text-gray-900">
+                                    Teacher Name
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="text"
+                                        name="teacherName"
+                                        id="teacherName"
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        onChange={handleChange}
+                                        value={teacherData.teacherName}
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:col-span-3">
+                                <label className="block text-sm font-medium leading-6 text-gray-900">
+                                    Problem ID
+                                </label>
+                                {/* <select
+                                    className="w-full p-2 border rounded"
+                                    id="problemID"
+                                    name="problemID"
+                                    value={teacherData.problemID}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Select a problem</option>
+                                    {problems.map((problem) => (
+                                        <option key={problem.ProblemID} value={problem.ProblemID}>
+                                            {problem.problemName}
+                                        </option>
+                                    ))}
+
+                                </select> */}
+                                <div className="mt-2">
+                                    <input
+                                        id="problemID"
+                                        name="problemID"
+                                        type="number"
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        onChange={handleChange}
+                                        value={teacherData.problemID}
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:col-span-3">
+                                <label className="block text-sm font-medium leading-6 text-gray-900">
+                                    Role ID
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        id="roleID"
+                                        name="roleID"
+                                        type="number"
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        onChange={handleChange}
+                                        value={teacherData.roleID}
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <p>Teacher Name:</p>
-                        <input
-                            type="text"
-                            className="w-full p-2 border rounded"
-                            id="teacherName"
-                            placeholder="Teacher Name"
-                            name="teacherName"
-                            value={teacherData.teacherName}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div>
-                        <p>Problem ID:</p>
-                        <input
-                            type="text"
-                            className="w-full p-2 border rounded"
-                            id="problemID"
-                            placeholder="Problem ID"
-                            name="problemID"
-                            value={teacherData.problemID}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div>
-                        <p>Role ID:</p>
-                        <input
-                            type="text"
-                            className="w-full p-2 border rounded"
-                            id="roleID"
-                            placeholder="Role ID"
-                            name="roleID"
-                            value={teacherData.roleID}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="text-center">
-                        <button
-                            className="w-24 p-2 bg-blue-500
-                             text-white rounded
-                             hover:bg-violet-600
-                             "
-                            onClick={createTeacher}
-                        >
-                            Add
-                        </button>
-                    </div>
+                </div>
+
+                <div className="mt-6 flex items-center justify-end gap-x-6">
+                    <button
+                        onClick={createTeacher}
+                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                        Save
+                    </button>
                 </div>
             </div>
         </>

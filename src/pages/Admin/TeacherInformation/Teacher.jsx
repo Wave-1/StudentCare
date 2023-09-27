@@ -11,7 +11,6 @@ const Teacher = () => {
         <Box height={20} />
         <Box sx={{ display: 'flex' }}>
           <Box compoments="main" sx={{ flexGrow: 1, p: 3 }}>
-            
           </Box>
         </Box>
         <TeacherList />
