@@ -10,7 +10,7 @@ const ResultsAnswered = () => {
           <Box compoments="main" sx={{ flexGrow: 1, p: 3 }}>
           </Box>
         </Box>
-        <FormResultsAnswered/>
+        <FormResultsAnswered />
       </div>
     </>
   )

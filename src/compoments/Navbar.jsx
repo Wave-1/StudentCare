@@ -117,7 +117,7 @@ export default function Navbar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={() => {handleMenuClose(); navigate('/Login')}}>Thoát</MenuItem>
+      <MenuItem onClick={() => {handleMenuClose(); navigate('/Login')}}>LogOut</MenuItem>
     </Menu>
   );
 

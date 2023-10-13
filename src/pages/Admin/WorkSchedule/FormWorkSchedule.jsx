@@ -67,15 +67,15 @@ function FormWorkSchedule(props) {
     setUpdateFormOpen(false); // Close the update form
   };
 
-  const handleSelectSlot = ({ start, end }) => {
-    // setSelectedDate({ start, end });
-    setOpen(true);
-  };
+  // const handleSelectSlot = ({ start, end }) => {
+  //   // setSelectedDate({ start, end });
+  //   setOpen(true);
+  // };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
+  const availableViews = ['month', 'agenda'];
   return (
     <>
       <Modal
@@ -105,11 +105,12 @@ function FormWorkSchedule(props) {
         {...props}
         events={events}
         localizer={localizer}
+        views={availableViews}
         components={{
           event: AppointmentEvent,
         }}
         onSelectEvent={handleEventClick}
-        onSelectSlot={handleSelectSlot}
+        // onSelectSlot={handleSelectSlot}
       />
 
       {selectedEvent && updateFormOpen && (

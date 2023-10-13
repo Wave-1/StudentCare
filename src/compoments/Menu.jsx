@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
-import { useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -18,7 +18,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import PersonIcon from '@mui/icons-material/Person';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useAppStore } from '../appStore';
-
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const drawerWidth = 240;
 
@@ -75,174 +76,146 @@ export default function Menu() {
   const theme = useTheme();
   // const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
   const updateOpen = useAppStore((state) => state.updateOpen);
   const open = useAppStore((state) => state.dopen);
   // Lấy RoleID từ sessionStorage
   const roleID = sessionStorage.getItem('RoleID');
 
-    
+
   const [selectedItem, setSelectedItem] = React.useState(null);
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
-  navigate(item.path); // Chuyển hướng đến đường dẫn tương ứng
-};
+    navigate(item.path); // Chuyển hướng đến đường dẫn tương ứng
+  };
 
-    // Define your menu items
-    const menuItemsAdmin = [
-      { text: 'Home', icon: <HomeIcon />, path: '/' },
-      { text: 'Student Information', icon: <PersonIcon />, path: '/Admin/Student' },
-      { text: 'Teacher Information', icon: <PersonIcon />, path: '/Admin/Teacher' },
-      { text: 'Work Schedule', icon: <CalendarMonthIcon />, path: '/Admin/Workschedule' },
-      { text: 'About', icon: <InfoIcon />, path: '/about' },
-    ];
-    const menuItemsStudent = [
-      { text: 'Home', icon: <HomeIcon />, path: '/' },
-      { text: 'Student Information', icon: <PersonIcon />, path: '/Student/Student' },
-      { text: 'Work Schedule', icon: <CalendarMonthIcon />, path: '/Student/Workschedule' },
-      { text: 'Thắc Mắc', icon: <HomeIcon />, path: '/Student/Inquiries' },
-      { text: 'Giấy Chứng Nhận', icon: <HomeIcon />, path: '/Student/Certificates' },
-      { text: 'About', icon: <InfoIcon />, path: '/about' },
-    ];
-  
+  // Define your menu items
+  const menuItemsAdmin = [
+    { text: 'Home', icon: <HomeIcon />, path: '/' },
+    { text: 'Student Information', icon: <PersonIcon />, path: '/Admin/Student' },
+    { text: 'Teacher Information', icon: <PersonIcon />, path: '/Admin/Teacher' },
+    { text: 'Results Answered', icon: <QuestionAnswerIcon />, path: '/Admin/ResultsAnswered' },
+    { text: 'Results Certification', icon: <DescriptionIcon />, path: '/Admin/ResultsCertification' },
+    // { text: 'About', icon: <InfoIcon />, path: '/about' },
+  ];
+
+  const menuItemsTeacher = [
+    { text: 'Home', icon: <HomeIcon />, path: '/' },
+    { text: 'Results Answered', icon: <QuestionAnswerIcon />, path: '/Teacher/ResultsAnswered' },
+    { text: 'Results Certification', icon: <DescriptionIcon />, path: '/Teacher/ResultsCertification' },
+  ];
+
+  const menuItemsStudent = [
+    { text: 'Home', icon: <HomeIcon />, path: '/' },
+    { text: 'Student Information', icon: <PersonIcon />, path: '/Student/Student' },
+    { text: 'Inquiries', icon: <HomeIcon />, path: '/Student/Inquiries' },
+    { text: 'Certificates', icon: <HomeIcon />, path: '/Student/Certificates' },
+    { text: 'Results', icon: <InfoIcon />, path: '/Student/ResultsAnswered' },
+  ];
+
   const renderAdminMenu = () => {
     return (
       <List>
-      {menuItemsAdmin.map((item, index) => (
-        <ListItem
-          key={index}
-          disablePadding
-          sx={{ display: 'block' }}
-          onClick={() => handleItemClick(item)} // Handle item click
-          selected={location.pathname === item.path} // Highlight the selected item
-        >
-          <ListItemButton
-            sx={{
-              minHeight: 48,
-              justifyContent: open ? 'initial' : 'center',
-              px: 2.5,
-            }}
+        {menuItemsAdmin.map((item, index) => (
+          <ListItem
+            key={index}
+            disablePadding
+            sx={{ display: 'block' }}
+            onClick={() => handleItemClick(item)} // Handle item click
+            selected={location.pathname === item.path} // Highlight the selected item
           >
-            <ListItemIcon
+            <ListItemButton
               sx={{
-                minWidth: 0,
-                mr: open ? 3 : 'auto',
-                justifyContent: 'center',
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
               }}
             >
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
     );
   };
 
   const renderTeacherMenu = () => {
     return (
-                <List>
-                {/* Student */}
-                <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/Teacher/Student') }}>
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      px: 2.5,
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : 'auto',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <PersonIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Student Information" sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                </ListItem>
-                {/* Teacher */}
-                <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/Teacher/Teacher') }}>
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      px: 2.5,
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : 'auto',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <PersonIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Teacher Information" sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                </ListItem>
-                {/* Workschedule */}
-                <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate('/Teacher/Workschedule') }}>
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      px: 2.5,
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : 'auto',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <CalendarMonthIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Work Schedule" sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                </ListItem>
-              </List>
+      <List>
+        {menuItemsTeacher.map((item, index) => (
+          <ListItem
+            key={index}
+            disablePadding
+            sx={{ display: 'block' }}
+            onClick={() => handleItemClick(item)} // Handle item click
+            selected={location.pathname === item.path} // Highlight the selected item
+          >
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
     );
   };
 
   const renderStudentMenu = () => {
     return (
       <List>
-      {menuItemsStudent.map((item, index) => (
-        <ListItem
-          key={index}
-          disablePadding
-          sx={{ display: 'block' }}
-          onClick={() => handleItemClick(item)} // Handle item click
-          selected={location.pathname === item.path} // Highlight the selected item
-        >
-          <ListItemButton
-            sx={{
-              minHeight: 48,
-              justifyContent: open ? 'initial' : 'center',
-              px: 2.5,
-            }}
+        {menuItemsStudent.map((item, index) => (
+          <ListItem
+            key={index}
+            disablePadding
+            sx={{ display: 'block' }}
+            onClick={() => handleItemClick(item)} // Handle item click
+            selected={location.pathname === item.path} // Highlight the selected item
           >
-            <ListItemIcon
+            <ListItemButton
               sx={{
-                minWidth: 0,
-                mr: open ? 3 : 'auto',
-                justifyContent: 'center',
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
               }}
             >
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
     );
   };
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import Box from '@mui/material/Box';
-import FormResultsAnswered from './FormResultsAnswered';
+import FormResultsCertification from './FormResultsCertification';
 const ResultsAnswered = () => {
   return (
     <>
@@ -10,7 +10,7 @@ const ResultsAnswered = () => {
           <Box compoments="main" sx={{ flexGrow: 1, p: 3 }}>
           </Box>
         </Box>
-        <FormResultsAnswered/>
+        <FormResultsCertification/>
       </div>
     </>
   )

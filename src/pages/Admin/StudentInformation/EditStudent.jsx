@@ -126,7 +126,7 @@ export default function AddStudent({ fid, onClose }) {
                 <div className="container mx-auto p-4 space-y-12">
                     <div className="space-y-12">
                         <div className="border-b border-gray-900/10 pb-12">
-                            <h2 className="text-4xl font-semibold leading-3 text-gray-900 text-center">Add Student</h2>
+                            <h2 className="text-4xl font-semibold leading-3 text-gray-900 text-center">Edit Student</h2>
                             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                                 <div className="sm:col-span-3">
                                     <label className="block text-sm font-medium leading-6 text-gray-900">
